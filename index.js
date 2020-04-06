@@ -1,6 +1,7 @@
 // npm install express 4.17.1 --save
 // npm instal mongoose 5.9.7 --save
 // npm install body-parser --save
+// npm install bcrypt --save
 // nodemon 은 쓰지 않을꺼임... 귀찮음... 사용하고 싶다면 npm install nodemon --save-dev
 
 const express = require('express')
