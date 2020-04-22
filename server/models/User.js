@@ -1,7 +1,7 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const salfRounds = 10;  // 암호화를 위한 salt가 몇자리인지 10이면 10자리 salt가 생성된다.
-
+const jwt = require('jsonwebtoken');
 
 const userSchema = mongoose.Schema({
     name: {
@@ -63,6 +63,40 @@ userSchema.pre('save', function(next) {
     }
 })
 
+userSchema.methods.comparePassword = function (planePassword, cb) {
+    bcrypt.compare(planePassword, this.password, (err, isMatch) => {
+        if (err) return cb(err)
+        return cb(null, isMatch)
+    })
+}
+
+userSchema.methods.generateToken = function (cb) {
+    var user = this;
+    
+    var token = jwt.sign(user._id.toHexString(), 'secretToken')
+    
+    user.token = token;
+    user.save((err, userInfo) => {
+        if (err) return cb(err)
+        return cb(null, userInfo)
+    })
+}
+
+// statics 뭔 기능이지
+userSchema.statics.findByToken = function (token, cb) {
+    var user = this;
+
+    // Token 을 복호화 한다.
+    jwt.verify(token, 'secretToken', function (err, decoded) {
+        // 유저 아이디의 토큰과 데이터 베이스의 토큰이 일치하는지 확인
+        
+        user.findOne({ '_id': decoded, 'token': token}, function (err, user) {
+            
+            if (err) return cb(err)
+            return cb(null, user)
+        });
+    })
+}
 
 const User = mongoose.model('User', userSchema)
 module.exports = { User }
