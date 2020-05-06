@@ -8,7 +8,7 @@
 
 const express = require('express')
 const app = express()
-const port = 5000
+
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -28,7 +28,9 @@ mongoose.connect(config.mongoURI, {
   .catch((err) => console.log(err))
 
 
-app.get('/', (req, res) => res.send('HelloWord! Welcome to Node js~'))
+app.get('/', (req, res) => res.send('HelloWord! Welcome to Node js~'));
+
+app.get('/api/hello', (req, res) => res.send('hello~'));
 
 // 여기서 /register 가 end point라고 하는데 그게 뭐지? url 맨 마지막에 붙는건가??
 app.post('/api/users/register', (req, res) => {
@@ -105,6 +107,7 @@ app.get('/api/users/logout', auth, (req, res) => {
         })
 })
 
+const port = 5000
 app.listen(port, () => console.log(`Example app listening port ${port}!`)) 
 
 // Route가 뭐지??

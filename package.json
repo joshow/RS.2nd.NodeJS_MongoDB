@@ -4,7 +4,7 @@
   "description": "React study 2nd subject server side",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node server/index.js",
     "test": " "
   },
   "author": "joshow",
