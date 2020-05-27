@@ -15,6 +15,7 @@ const cookieParser = require('cookie-parser');
 const { User } = require('./models/User');
 const { auth } = require('./middleware/auth');
 
+
 app.use(bodyParser.urlencoded({extended: true})); // urlendcoded 양식의 정보를 분석할 수 있도록 한다.
 app.use(bodyParser.json());  // json 파일을 분석할 수 있도록 한다. 
 app.use(cookieParser());
@@ -27,22 +28,27 @@ mongoose.connect(config.mongoURI, {
 }).then(() => console.log('MongoDB Connected...'))
   .catch((err) => console.log(err))
 
-
 app.get('/', (req, res) => res.send('HelloWord! Welcome to Node js~'));
 
-app.get('/api/hello', (req, res) => res.send('hello~'));
+app.get('/api/hello', (req, res) => { 
+    console.log('in get hello');
+    res.send('hello~'); 
+});
 
 // 여기서 /register 가 end point라고 하는데 그게 뭐지? url 맨 마지막에 붙는건가??
 app.post('/api/users/register', (req, res) => {
+    console.log('post api/users/register');
     // 회원가입 할 때 필요한 정보들을 클라이언트에서 가져오면 그들을 DB에 넣어준다.
 
     // body-parser를 통해 req.body에서 전송받은 데이터를 사용할 수 있다.
     const user = new User(req.body)
 
+    console.log(req.body);
+
     // Mongo DB 에 저장하는 메소드 save
     user.save((err, userInfo) => {
         if (err) {
-          return res.json({ success: true, err })
+          return res.json({ success: false, err })
         }
         return res.status(200).json({ success: true })
     }) 
@@ -51,6 +57,7 @@ app.post('/api/users/register', (req, res) => {
 app.post('/api/users/login', (req, res) => {
     // 데이터베이스에서 요청된 E-mail 계정 찾기
     User.findOne( { email: req.body.email }, (err, userInfo) => {  // mongdoDB 메소드
+        console.log('in post login findOne');
         if (!userInfo) {
             return res.json({
                 loginSuccess: false,
@@ -60,6 +67,7 @@ app.post('/api/users/login', (req, res) => {
 
         // E-mail이 동일하다면 password 또한 동일한지 확인
         userInfo.comparePassword(req.body.password, (err, isMatch) => {
+            console.log('in post login comparePassword');
             // if (err) return res.json({ loginSuccess: false, err })
             if (!isMatch) {
                 return res.json({
@@ -69,6 +77,7 @@ app.post('/api/users/login', (req, res) => {
             }
           
             userInfo.generateToken((err, userInfo) => {
+                console.log('in post login generateToken');
                 if (err) return res.status(400).send(err)
 
                 res.cookie("x_auth", userInfo.token)

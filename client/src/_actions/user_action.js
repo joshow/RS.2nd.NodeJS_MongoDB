@@ -1,10 +1,38 @@
 import axios from 'axios'
+import {
+    LOGIN_USER,
+    REGISTER_USER,
+    AUTH_USER
+} from './types';
 
 // Call at LoginPage.js 29 line
-// 30강 6분 25초에서 멈춤
 export function loginUser(dataToSubmit) {
-    axios.post('/api/user/login', dataToSubmit)
-        .then(response => {
-            
-        });
+    const request = axios.post('/api/users/login', dataToSubmit)
+        .then(response => response.data);
+
+    return {
+        type: LOGIN_USER,
+        payload: request    // resopnse
+    }
+}
+
+// Call at RegisterPag.js 37 line
+export function registerUser(dataToSubmit) {
+    const request = axios.post('/api/users/register', dataToSubmit)
+        .then(response => response.data);
+
+    return {
+        type: REGISTER_USER,
+        payload: request    // resopnse
+    }
+}
+
+export function auth() {
+    const request = axios.get('/api/users/auth')
+        .then( response => response.data );
+
+    return {
+        type: AUTH_USER,
+        payload: request    // resopnse
+    }
 }

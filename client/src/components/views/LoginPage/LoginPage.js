@@ -1,10 +1,11 @@
 import React, {useState} from 'react'
-import axios from 'axios';
 import {useDispatch} from 'react-redux'
 import {loginUser} from '../../../_actions/user_action'
+import {withRouter} from 'react-router-dom';
+//import { PromiseProvider } from 'mongoose';
 
-function LoginPage() {
-    const dispatch = useDispatch();
+function LoginPage(props) {
+    const dispatch = useDispatch();     // Dispatch를 통해 state를 바꾸기 전 action을 정할 수 있다.
 
     const [Email, setEmail] = useState("");
     const [Password, setPassword] = useState("");
@@ -27,7 +28,15 @@ function LoginPage() {
             password: Password
         }
 
-        dispatch(loginUser(body));
+        dispatch(loginUser(body))
+            .then(response => {
+                if (response.payload.loginSuccess) {
+                    console.log(props);
+                    props.history.push('/');
+                } else {
+                    alert('Error_In_LoginPage');
+                }
+            });
     }
 
     return (
@@ -52,4 +61,4 @@ function LoginPage() {
     )
 }
 
-export default LoginPage
+export default withRouter(LoginPage);
